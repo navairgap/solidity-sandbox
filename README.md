@@ -26,3 +26,6 @@ Never deploy these to mainnet; local fork only.
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
+---
+maintained · verified 2026-09-30
