@@ -35,3 +35,9 @@ maintained · verified 2026-09-30
 - never point this at mainnet; the sandbox exists so you never have to
 - testnet keys are throwaway — treat any key that touched a funded wallet as compromised
 - no `PRIVATE_KEY` in the repo, ever; `.env` is gitignored and that's load-bearing
+
+## Security
+
+- never point this at mainnet; the sandbox exists so you never have to
+- testnet keys are throwaway — treat any key that touched a funded wallet as compromised
+- no `PRIVATE_KEY` in the repo, ever; `.env` is gitignored and that's load-bearing
