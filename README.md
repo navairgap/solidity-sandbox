@@ -45,3 +45,7 @@ maintained · verified 2026-09-30
 ## Testnets
 
 sepolia is the default — stable, cheap, faucets alive. keep deploy keys in `.env` (gitignored), never commit them, treat any key that touched a funded wallet as burned.
+
+## Common tasks
+
+compile: `forge build` (or `solc --bin`). deploy to sepolia: `forge script script/Deploy.s.sol --broadcast --verify`. verify on explorer: `forge verify-contract`. the sandbox scripts mirror these one-to-one.
