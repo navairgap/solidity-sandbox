@@ -49,3 +49,7 @@ sepolia is the default — stable, cheap, faucets alive. keep deploy keys in `.e
 ## Common tasks
 
 compile: `forge build` (or `solc --bin`). deploy to sepolia: `forge script script/Deploy.s.sol --broadcast --verify`. verify on explorer: `forge verify-contract`. the sandbox scripts mirror these one-to-one.
+
+## Layout
+
+contracts/, script/, test/ — if a file doesn't fit one of the three, it's grown up and needs its own repo.
