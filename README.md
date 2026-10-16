@@ -53,3 +53,7 @@ compile: `forge build` (or `solc --bin`). deploy to sepolia: `forge script scrip
 ## Layout
 
 contracts/, script/, test/ — if a file doesn't fit one of the three, it's grown up and needs its own repo.
+
+## Telemetry
+
+none. the sandbox makes no outbound calls at runtime beyond the rpc endpoint you configure. compile, deploy, verify — all between you and the chain.
