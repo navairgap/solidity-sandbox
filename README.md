@@ -35,6 +35,21 @@ script/       optional local deployment scripts
 - [ ] Add a corrected version and regression test.
 - [ ] Add static analysis to CI once the project has runnable code.
 
+## Contract review checklist
+
+Use this checklist for each exercise before calling it complete:
+
+- [ ] **Authorization:** every privileged state change checks the intended caller.
+- [ ] **External calls:** checks-effects-interactions ordering is deliberate; external calls are treated as failure points.
+- [ ] **Reentrancy:** tests attempt nested calls where an external call can re-enter state-changing code.
+- [ ] **Arithmetic and units:** token amounts, timestamps, and percentages have documented units and boundary tests.
+- [ ] **Input bounds:** zero addresses, empty values, maximum values, and invalid enum values are covered.
+- [ ] **Events:** successful state changes emit events with enough context for off-chain consumers.
+- [ ] **Failure paths:** tests verify reverts and confirm state remains unchanged after rejected operations.
+- [ ] **Dependencies:** compiler version and third-party dependencies are pinned for reproducible builds.
+
+For a deliberately vulnerable teaching contract, list the exact vulnerability beside the example and link it to a test that demonstrates the failure. Keep the corrected contract and regression test separate so learners can compare them.
+
 ## Security note
 
 These exercises are for education. Passing tests or static analysis does not establish that a contract is safe for production. Real deployments require independent review and a threat model appropriate to the value at risk.
