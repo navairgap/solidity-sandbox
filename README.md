@@ -57,3 +57,8 @@ These exercises are for education. Passing tests or static analysis does not est
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+
+## Maintenance notes
+
+Use a local chain and pinned compiler settings for reproducible exercises. Test both authorized and unauthorized callers, boundary values, external-call failures, and reentrancy where applicable. Never place real keys or funded accounts in examples.
