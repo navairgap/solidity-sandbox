@@ -14,4 +14,4 @@ jobs:
         with:
           version: stable
       - name: Run deterministic Solidity tests
-        run: forge test --offline -vvv
+        run: forge test -vvv
