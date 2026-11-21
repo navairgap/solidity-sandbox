@@ -1,25 +1,50 @@
-# Reproducible local Foundry workflow (proposed)
+# Reproducible local Foundry workflow
 
-Solidity exercises should be reproducible and local by default. This document proposes a workflow for a future Foundry-based version of the repository; no contracts or toolchain are implemented by this document.
+This repository is an active Foundry project. The first exercise is an owner-controlled
+`Counter` contract with a small, dependency-free regression suite.
 
-## Toolchain policy
+## Pinned toolchain
 
-Choose and pin a Solidity compiler version for each exercise. Pin the Foundry toolchain or document the exact stable release used for verification. Keep dependency versions explicit and review dependency updates separately from contract changes.
+- Solidity compiler: `0.8.24`, configured in `foundry.toml`.
+- Optimizer: enabled with 200 runs, configured in `foundry.toml`.
+- Foundry CLI: `v1.10.0`, pinned in `.github/workflows/ci.yml`.
+- The first exercise does not require third-party Solidity libraries.
 
-A future project configuration should specify the source, test, and output directories and enable compiler settings consistently. Avoid relying on a globally installed, unpinned compiler.
+Keep compiler and Foundry version changes explicit in reviewable commits. When changing
+either version, rerun the complete local verification sequence and record the version
+used in the change description.
 
 ## Local-only development
 
-- Run unit tests against a local development environment.
-- Do not add scripts that deploy exercises to mainnet or use funded accounts.
-- Use deterministic test fixtures and local accounts with no real value.
-- Keep private keys and populated environment files out of version control.
-- Make any forked-network test opt-in and require an explicit RPC endpoint.
+- Run unit tests with Foundry's local test runner.
+- No RPC endpoint, funded account, private key, or mainnet deployment is needed for
+  the current exercise.
+- Do not add deployment scripts that default to a public network.
+- Keep private keys, seed phrases, and populated environment files out of version
+  control.
+- Keep generated build output and broadcast records out of commits.
 
-## Review commands
+## Verification
 
-Once Foundry files exist, the expected verification sequence should include formatting checks, compilation, unit tests, and static analysis where supported. Record the exact command and tool version in the pull request or exercise notes. A successful test run is evidence for the tested cases, not a production security certification.
+Run these commands from the repository root:
 
-## Expected test structure
+```sh
+forge --version
+forge fmt --check
+forge build
+forge test -vvv
+```
 
-Separate normal behavior tests, authorization failures, boundary inputs, external-call failures, and adversarial reentrancy scenarios. Verify both expected reverts and that state remains unchanged after rejected operations. Keep each teaching exercise isolated so learners can understand the threat model.
+CI runs the same formatting, build, and test checks. Foundry may download the pinned
+Solidity compiler the first time it is needed; this is a compiler download, not a
+connection to an Ethereum RPC endpoint.
+
+## Test structure
+
+Separate normal behavior, authorization failures, boundary inputs, external-call
+failures, and adversarial reentrancy scenarios. Assert both expected revert data and
+that relevant state remains unchanged after rejected operations. Keep each exercise
+isolated so learners can identify its threat model.
+
+A passing test suite is evidence for the properties and inputs it checks. It is not
+a production security certification.
