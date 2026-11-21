@@ -4,14 +4,31 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   forge-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
       - uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: stable
+          version: v1.10.0
+
+      - name: Show Foundry version
+        run: forge --version
+
+      - name: Check Solidity formatting
+        run: forge fmt --check
+
+      - name: Build contracts
+        run: forge build
+
       - name: Run deterministic Solidity tests
         run: forge test -vvv
