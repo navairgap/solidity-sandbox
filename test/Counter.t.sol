@@ -15,30 +15,18 @@ interface Vm {
 }
 
 contract NonOwnerActor {
-    function tryIncrement(Counter counter)
-        external
-        returns (bool success, bytes memory returnData)
-    {
-        (success, returnData) = address(counter).call(
-            abi.encodeWithSelector(Counter.increment.selector)
-        );
+    function tryIncrement(Counter counter) external returns (bool success, bytes memory returnData) {
+        (success, returnData) = address(counter).call(abi.encodeWithSelector(Counter.increment.selector));
     }
 
-    function tryReset(Counter counter)
-        external
-        returns (bool success, bytes memory returnData)
-    {
-        (success, returnData) = address(counter).call(
-            abi.encodeWithSelector(Counter.reset.selector)
-        );
+    function tryReset(Counter counter) external returns (bool success, bytes memory returnData) {
+        (success, returnData) = address(counter).call(abi.encodeWithSelector(Counter.reset.selector));
     }
 }
 
 /// @dev Uses plain require/assert so the first exercise has no external test dependency.
 contract CounterTest {
-    Vm private constant vm = Vm(
-        address(uint160(uint256(keccak256("hevm cheat code"))))
-    );
+    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
 
     function testOwnerCanIncrementAndReset() external {
         Counter counter = new Counter();
@@ -57,14 +45,8 @@ contract CounterTest {
         (bool success, bytes memory returnData) = actor.tryIncrement(counter);
         require(!success, "non-owner increment unexpectedly succeeded");
 
-        bytes memory expectedError = abi.encodeWithSelector(
-            Counter.Unauthorized.selector,
-            address(actor)
-        );
-        require(
-            keccak256(returnData) == keccak256(expectedError),
-            "increment should report the unauthorized caller"
-        );
+        bytes memory expectedError = abi.encodeWithSelector(Counter.Unauthorized.selector, address(actor));
+        require(keccak256(returnData) == keccak256(expectedError), "increment should report the unauthorized caller");
         require(counter.count() == 0, "rejected increment changed state");
     }
 
@@ -76,14 +58,8 @@ contract CounterTest {
         (bool success, bytes memory returnData) = actor.tryReset(counter);
         require(!success, "non-owner reset unexpectedly succeeded");
 
-        bytes memory expectedError = abi.encodeWithSelector(
-            Counter.Unauthorized.selector,
-            address(actor)
-        );
-        require(
-            keccak256(returnData) == keccak256(expectedError),
-            "reset should report the unauthorized caller"
-        );
+        bytes memory expectedError = abi.encodeWithSelector(Counter.Unauthorized.selector, address(actor));
+        require(keccak256(returnData) == keccak256(expectedError), "reset should report the unauthorized caller");
         require(counter.count() == 1, "rejected reset changed state");
     }
 
@@ -106,29 +82,21 @@ contract CounterTest {
         _assertCountChangedEvent(counter, 1, 0);
     }
 
-    function _assertCountChangedEvent(
-        Counter counter,
-        uint256 expectedPreviousValue,
-        uint256 expectedNewValue
-    ) private {
+    function _assertCountChangedEvent(Counter counter, uint256 expectedPreviousValue, uint256 expectedNewValue)
+        private
+    {
         Vm.Log[] memory entries = vm.getRecordedLogs();
         require(entries.length == 1, "state change should emit one event");
         require(entries[0].emitter == address(counter), "unexpected event emitter");
         require(entries[0].topics.length == 2, "unexpected event topics");
         require(
-            entries[0].topics[0] == keccak256("CountChanged(address,uint256,uint256)"),
-            "unexpected event signature"
+            entries[0].topics[0] == keccak256("CountChanged(address,uint256,uint256)"), "unexpected event signature"
         );
         require(
-            entries[0].topics[1] == bytes32(uint256(uint160(address(this)))),
-            "event caller should be the test owner"
+            entries[0].topics[1] == bytes32(uint256(uint160(address(this)))), "event caller should be the test owner"
         );
 
-        (uint256 previousValue, uint256 newValue) =
-            abi.decode(entries[0].data, (uint256, uint256));
-        require(
-            previousValue == expectedPreviousValue && newValue == expectedNewValue,
-            "incorrect event values"
-        );
+        (uint256 previousValue, uint256 newValue) = abi.decode(entries[0].data, (uint256, uint256));
+        require(previousValue == expectedPreviousValue && newValue == expectedNewValue, "incorrect event values");
     }
 }
