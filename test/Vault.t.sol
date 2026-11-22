@@ -96,9 +96,8 @@ contract VaultTest {
     function testWithdrawRejectsZeroAmount() external {
         Vault vault = new Vault();
 
-        (bool success, bytes memory returnData) = address(vault).call(
-            abi.encodeWithSelector(Vault.withdraw.selector, 0)
-        );
+        (bool success, bytes memory returnData) =
+            address(vault).call(abi.encodeWithSelector(Vault.withdraw.selector, 0));
 
         require(!success, "zero withdrawal unexpectedly succeeded");
         require(
@@ -113,9 +112,8 @@ contract VaultTest {
         vault.deposit{value: 1 ether}();
 
         uint256 requested = 1 ether + 1;
-        (bool success, bytes memory returnData) = address(vault).call(
-            abi.encodeWithSelector(Vault.withdraw.selector, requested)
-        );
+        (bool success, bytes memory returnData) =
+            address(vault).call(abi.encodeWithSelector(Vault.withdraw.selector, requested));
 
         bytes memory expectedError =
             abi.encodeWithSelector(Vault.InsufficientBalance.selector, address(this), requested, 1 ether);
@@ -126,7 +124,7 @@ contract VaultTest {
         require(address(vault).balance == 1 ether, "failed withdrawal moved ether");
     }
 
-    function testFailedPayoutRestoresAccounting() external {
+    function testPayoutFailureRestoresAccounting() external {
         Vault vault = new Vault();
         RejectingVaultActor actor = new RejectingVaultActor();
         vm.deal(address(actor), 1 ether);

@@ -33,10 +33,9 @@ contract Vault {
         // Effects happen before the external call so a callback sees the reduced balance.
         balances[msg.sender] = available - amount;
         totalDeposits -= amount;
+        emit Withdrawn(msg.sender, amount, balances[msg.sender]);
 
         (bool success,) = payable(msg.sender).call{value: amount}("");
         if (!success) revert TransferFailed();
-
-        emit Withdrawn(msg.sender, amount, balances[msg.sender]);
     }
 }
