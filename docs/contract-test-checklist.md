@@ -20,6 +20,22 @@ corrected implementation and regression test.
 - The event includes the owner as its indexed caller and the correct previous and
   new count values.
 
+## Current Vault regression baseline
+
+- A non-zero deposit increases the caller's balance, `totalDeposits`, and the
+  vault's ether balance by the same amount.
+- A withdrawal reduces the caller's balance and `totalDeposits` before the
+  receiver callback, then transfers the requested ether.
+- Zero-value deposits and zero-amount withdrawals revert with `ZeroAmount`.
+- A withdrawal above the caller's balance reverts with the exact
+  `InsufficientBalance` payload and leaves accounting unchanged.
+- A receiver that rejects ether causes `TransferFailed`; the transaction revert
+  restores the caller's balance and aggregate deposits.
+- A reentrant receiver cannot withdraw twice: its nested call observes the
+  post-effects balance and fails with `InsufficientBalance`.
+- Deposit and withdrawal events identify the caller and report the amount and
+  resulting balance.
+
 ## State-integrity checks
 
 For contracts that move value or update accounting, add invariant tests for
@@ -28,6 +44,11 @@ Assert that a reverted external call leaves all relevant state unchanged, and te
 reentrancy with a malicious receiver in a local test chain. Keep fuzz seeds and
 compiler settings with the test output so a failing case can be reproduced. Never
 use real funds or a production RPC endpoint for these exercises.
+
+For the Vault, compare the sum of recorded user balances with `totalDeposits`
+across deposit and withdrawal sequences. Keep forced ether transfers and other
+out-of-band balance changes distinct from recorded user deposits; the contract
+balance is not by itself a complete accounting ledger.
 
 ## Differential and fuzz testing
 
